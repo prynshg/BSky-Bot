@@ -51,15 +51,24 @@ INDIA_NEWS_RSS = "https://timesofindia.indiatimes.com/rssfeedstopstories.cms"
 
 def fetch_trending_india_news():
     try:
-        response = requests.get(INDIA_NEWS_RSS)
+        print("🔍 Fetching news from:", INDIA_NEWS_RSS)
+        response = requests.get(INDIA_NEWS_RSS, timeout=10)  # Added timeout
+        print(f"🔄 HTTP Response Code: {response.status_code}")
+        
         if response.status_code == 200:
+            print("✅ Successfully fetched RSS feed!")
             soup = BeautifulSoup(response.text, "lxml-xml")
             news_items = [item.title.text for item in soup.find_all("item")]
-            return news_items[:5]
+            print(f"📰 Fetched {len(news_items)} news items.")
+            return news_items[:5] if news_items else ["No news available."]
         else:
             print(f"⚠️ Failed to fetch news, status code: {response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"⚠️ Network error while fetching India news: {e}")
     except Exception as e:
-        print(f"⚠️ Error fetching India news: {e}")
+        print(f"⚠️ Unexpected error while fetching India news: {e}")
+
+    print("🚨 Using backup news headlines due to failure.")
     return [
         "Big changes in Indian politics today!",
         "Tech boom hits India with new startups.",
@@ -68,14 +77,14 @@ def fetch_trending_india_news():
         "Bollywood’s latest blockbuster drops!"
     ]
 
+
 def generate_post():
     try:
         trending_news = fetch_trending_india_news()
-        # topic = random.choice(trending_news)
-        topic="Happening in Cricket "
+        topic = random.choice(trending_news)
         print(f"📌 Selected News Topic: {topic}")
 
-        prompt = f"Give latest updates about {topic} (max 150 chars): "
+        prompt = f"Write a short, fun English post about {topic} (max 120 chars): "
         input_ids = tokenizer.encode(prompt, return_tensors="pt")
 
         output = model.generate(
