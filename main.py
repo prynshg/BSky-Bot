@@ -71,10 +71,11 @@ def fetch_trending_india_news():
 def generate_post():
     try:
         trending_news = fetch_trending_india_news()
-        topic = random.choice(trending_news)
+        # topic = random.choice(trending_news)
+        topic="Happening in Cricket "
         print(f"📌 Selected News Topic: {topic}")
 
-        prompt = f"Write a short, fun English post about {topic} (max 120 chars): "
+        prompt = f"Give latest updates about {topic} (max 150 chars): "
         input_ids = tokenizer.encode(prompt, return_tensors="pt")
 
         output = model.generate(
