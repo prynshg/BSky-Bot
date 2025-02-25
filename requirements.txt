@@ -1,0 +1,7 @@
+transformers
+atproto
+requests
+beautifulsoup4
+python-dotenv
+torch
+schedule
